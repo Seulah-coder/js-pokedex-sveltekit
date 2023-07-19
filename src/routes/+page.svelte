@@ -3,61 +3,88 @@
     import { page } from "$app/stores";
     import type { IndexMonster } from "./+page";
     import { generations } from "./generations";
-  import { goto } from "$app/navigation";
+    import { goto } from "$app/navigation";
+    import Monster from "./monster.svelte";
+    import { count } from "$lib/stores";
     
     export let data: PageData;
    
-   $: monsterId = $page.url.searchParams.get("monsterId") || '';
-   $: monster = data.monsters.find((monster) => monster.id === monsterId);
-   $: monsterId2 = $page.url.searchParams.get("monsterId2") || '';
-   $: monster2 = data.monsters.find((monster) => monster.id === monsterId2);
+    let form = {
+        searchString : ''
+    };
+    let searchString = '';
+    $: selectedmonsters = data.monsters.filter((monster) => {
+        return monster.name.toLowerCase().includes(searchString.toLowerCase());
+    });
+
+    $: monsterId = $page.url.searchParams.get("monsterId") || '';
+    $: monster = data.monsters.find((monster) => monster.id === monsterId);
+    $: monsterId2 = $page.url.searchParams.get("monsterId2") || '';
+    $: monster2 = data.monsters.find((monster) => monster.id === monsterId2);
+
+    $: selectedGenerationId = $page.url.searchParams.get('generation_id') || '';
 
 //    const monsterClick = (monster :IndexMonster) => {
 //     monsterId = monster.id;
 //     goto(`?monsterId=${monsterId}`);
 //    };
 
-const updateSearchParams = (key:string, value:string) => {
-    const searchParams = new URLSearchParams($page.url.searchParams);
-    searchParams.set(key,value);
-    goto (`?${searchParams.toString()}`);
-}
+    const updateSearchParams = (key:string, value:string) => {
+        const searchParams = new URLSearchParams($page.url.searchParams);
+        searchParams.set(key,value);
+        goto (`?${searchParams.toString()}`);
+    }
 
+    const submitSearch= (e:Event) => {
+        searchString = form.searchString
+    }
 </script>
 
-<h1>{monsterId}</h1>
-<h2>{monster?.name}</h2>
-
-<h1>{monsterId2}</h1>
-<h2>{monster2?.name}</h2>
-
+{#if monster}
+<Monster 
+    monster={monster}
+    updateSearchParams={updateSearchParams}
+/>
+{/if}
+{#if monster2}
+<Monster 
+    monster={monster2}
+    updateSearchParams={updateSearchParams}
+/>
+{/if}
 
     <div class="generations">
+        <button 
+            class="generation" 
+            class:active={selectedGenerationId == 'all'}
+            on:click={() => updateSearchParams(`generation_id`, `all`)}
+        >
+         All
+        </button>
         {#each generations as generation (generation.id)}
         <!-- <h1>{generation.name}</h1> -->
         <!-- <p>Games: {generation.games.join(', ')}</p> -->
-        <div class="generation">{generation.main_region}</div>
+        <button 
+            class="generation"
+            class:active={selectedGenerationId === generation.id.toString()}
+            on:click={() => updateSearchParams(`generation_id`, generation.id.toString())}
+            >
+            {generation.main_region}
+        </button>
         {/each}
     </div>
-    
+
+    <form class="search-form" on:submit|preventDefault={submitSearch}>
+        <input class="search-field" type="text" bind:value={form.searchString} placeholder="Pokemon Name"/>
+        <input type="submit" value="Search" />
+    </form>
     <div class="monsters">
-        {#each data.monsters as monster (monster.id)}
-        <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div class="monster">
-            <div on:click={() => {updateSearchParams('monsterId', monster.id)}}>
-                <div class="monster-content">
-                    <img src="{monster.image}" alt="{monster.name}">
-                    {monster.name}
-                </div>
-                <div class="monster-id">
-                    {monster.id}
-                </div>
-            </div>
-            <div on:click={() => {updateSearchParams('monsterId2', monster.id)}}>
-                Add Monster 2
-            </div>
-        </div>
+        {#each selectedmonsters as monster (monster.id)}
+            <Monster 
+                monster = {monster}
+                updateSearchParams={updateSearchParams}
+                isInteractive={true}
+            /> 
         {/each}
     </div>
     
@@ -75,38 +102,46 @@ const updateSearchParams = (key:string, value:string) => {
             border: 1px solid black;
             background-color: #f9f9f9;
             color: #333;
+            cursor: pointer;
+        }
+
+        .generation.active {
+            background-color: #333;
+            color: #fff;
         }
         .generation:hover {
             background-color: #eee;
+        }
+
+        .generation.active:hover {
+            background-color: #444;
         }
         .monsters {
             display: flex;
             flex-direction: row;
             flex-wrap: wrap;
-           justify-content: center;
+            justify-content: center;
         
         }
-        .monster-id{
-            position: absolute;
-            top:8px;
-            left: 8px;
-            font-size: 0.8em;
-            color: #aaa;
-        }
-        .monster{
-            width : 100px;
-            margin: 10px;
-            padding: 10px;
-            position: relative;
-            background-color: #eee;
-          
-        }
-        .monster:hover{
-            background-color: #ddd;
-        }
-        .monster-content{
+        .search-form{
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
         }
+        .search-form input[type="text"]{
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #333;
+            width: 200px;
+        }
+        .search-form input[type="submit"]{
+            padding: 5px 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin-left: 10px;
+            background-color: #333;
+            color: #fff;
+
+        }
+     
     </style>
