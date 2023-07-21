@@ -1,16 +1,22 @@
 <script lang="ts">
   import type { IndexMonster } from "./+page";
+  import { caughtMonsters } from "$lib/stores";
 
 export let monster: IndexMonster;
-export let updateSearchParams: (key:string, value:string) => void;
-export let isInteractive: boolean = false;
+
+const catchMonster = () => {
+    caughtMonsters.update((monsters) => {
+        return [...monsters,monster]
+    });
+    console.log("catch monster", monster);
+};
 
 </script>
 
  <!-- svelte-ignore a11y-click-events-have-key-events -->
         <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="monster">
-            <div on:click={() => isInteractive ? updateSearchParams('monsterId', monster.id) : () => {}}>
+            <div on:click={catchMonster}>
                 <div class="monster-content">
                     <img src="{monster.image}" alt="{monster.name}">
                     {monster.name}
@@ -19,11 +25,6 @@ export let isInteractive: boolean = false;
                     {monster.id}
                 </div>
             </div>
-            {#if isInteractive}
-                <div on:click={() => {updateSearchParams('monsterId2', monster.id)}}>
-                    Add Monster 2
-                </div>
-            {/if}
         </div>
 
 <style>

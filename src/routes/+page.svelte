@@ -17,10 +17,6 @@
         return monster.name.toLowerCase().includes(searchString.toLowerCase());
     });
 
-    $: monsterId = $page.url.searchParams.get("monsterId") || '';
-    $: monster = data.monsters.find((monster) => monster.id === monsterId);
-    $: monsterId2 = $page.url.searchParams.get("monsterId2") || '';
-    $: monster2 = data.monsters.find((monster) => monster.id === monsterId2);
 
     $: selectedGenerationId = $page.url.searchParams.get('generation_id') || '';
 
@@ -39,19 +35,6 @@
         searchString = form.searchString
     }
 </script>
-
-{#if monster}
-<Monster 
-    monster={monster}
-    updateSearchParams={updateSearchParams}
-/>
-{/if}
-{#if monster2}
-<Monster 
-    monster={monster2}
-    updateSearchParams={updateSearchParams}
-/>
-{/if}
 
     <div class="generations">
         <button 
@@ -82,8 +65,6 @@
         {#each selectedmonsters as monster (monster.id)}
             <Monster 
                 monster = {monster}
-                updateSearchParams={updateSearchParams}
-                isInteractive={true}
             /> 
         {/each}
     </div>
