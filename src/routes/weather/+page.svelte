@@ -2,12 +2,25 @@
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
 
+    import type { PageData } from "../$types";
+
+    export let dbData : PageData;
+    console.log(dbData);
+    // $:({tutorials} = dbData);
+
+    // dbData.tutorials.forEach((item: any) => {
+    //     console.log('>>>>' +item.name);
+    // });
+
+
     let weather : {
         air_temperature :number;
         wind_speed : number;
         relative_humidity: number;
         precipitation_amount: number;
     }
+
+    let rainYn : string;
     let releasedTime= "";
     let location = "" || "현재";
 
@@ -30,7 +43,7 @@
 
             let today = new Date();
             let month = today.getMonth() +1;
-            let date = today.getDate();
+            let date = today.getDate(); 
             let hours = today.getHours();
             if(time > 0){
                     location = "출근";
@@ -46,15 +59,18 @@
                 for(var i=0; i<timeseries.length; i++){
                     const getTimeValue = timeseries[i].time;
                 
-                    let koreaNewDate = new Date(getTimeValue);
+                    let koreaNewDate = new Date(getTimeValue); //utc
                     let koreaDate = koreaNewDate.getDate();
                     let koreaHour = koreaNewDate.getHours();
                     
         
                     if(date == koreaDate){
                         if(koreaHour == hours){
+                            console.log(koreaHour);
+                            console.log(hours);
                             console.log(timeseries[i]);
                             weather = timeseries[i].data.instant.details;
+                            rainYn = timeseries[i].data.next_1_hours.summary.symbol_code;
                         }
                     }
                 } 
@@ -105,13 +121,15 @@
 
 <div class="weather">
 
+
+
 {#if weather}
 
     <p class="location">{location} 지역</p>
         온도 : {weather?.air_temperature || 0}
         습도 : {weather?.relative_humidity|| 0}
         바람 세기 : {weather?.wind_speed|| 0}
-        비: {weather?.precipitation_amount || "강수량 없음"}
+        비: {rainYn || "강수량 없음"}
         날씨 관측 시간 : {releasedTime}
 
 {:else}
