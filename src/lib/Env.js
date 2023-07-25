@@ -1,0 +1,1 @@
+export const MONGO_URL = import.meta.env.MONGO_URL;
