@@ -2,6 +2,9 @@
 	"name": "js-pokedex-sveltekit",
 	"version": "0.0.1",
 	"private": true,
+	"prisma" : {
+		"seed": "npx vite-node prisma/seed.ts"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -23,6 +26,7 @@
 		"@capacitor/cli": "^5.2.1",
 		"@capacitor/core": "^5.2.1",
 		"@capacitor/geolocation": "^5.0.6",
+		"@prisma/client": "^5.0.0",
 		"axios": "^1.4.0",
 		"mongodb": "^5.7.0"
 	}
