@@ -53,7 +53,7 @@
                     }
             }
 
-            let timeseries: [] = responseToJson.properties?.timeseries
+            let timeseries: any[] = responseToJson.properties?.timeseries
             releasedTime = responseToJson.properties?.meta.updated_at;
 
                 for(var i=0; i<timeseries.length; i++){
