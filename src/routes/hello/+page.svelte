@@ -11,7 +11,7 @@ async function subscribe(event:Event) {
 }
 </script>
 
-<h1>Home Page</h1>
+<h1>Newsletter</h1>
 
 <form on:submit|preventDefault={subscribe}>
 
