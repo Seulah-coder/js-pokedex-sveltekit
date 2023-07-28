@@ -1,30 +1,35 @@
-<div class="posts">
-    <aside>
+<script lang="ts">
+  import type { LayoutData } from "./$types";
+
+  export let data : LayoutData;
+</script>
+
+<div class="layout">
+
+<aside>
+    <nav>
         <h4>Posts</h4>
-        <nav>
-            <ul>
+
+        <ul>
+            {#each data.posts as {slug, title}}
                 <li>
-                    <a href="/hello/posts/one">One</a>
+                    <a href="/hello/posts/{slug}">{title}</a>
                 </li>
-                <li>
-                    <a href="/hello/posts/two">Two</a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
-    
-    <main>
-        <slot />
-    </main>
+            {/each}
+        </ul>
+    </nav>
+</aside>
+
+<main>
+    <slot />
+</main>
 </div>
 
-
 <style>
-
-    .posts {
+    .layout {
         display: grid;
-        gap: 2rem;
-        grid-template-columns: 200px 60ch;
+        grid-template-columns: 200px minmax(auto, 60ch);
+        gap : 4rem;
         margin-top: 2rem;
     }
 </style>

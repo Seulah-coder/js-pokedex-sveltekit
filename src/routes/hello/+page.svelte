@@ -1,22 +1,19 @@
 <script lang="ts">
-async function subscribe(event:Event) {
-    const form = event.target as HTMLFormElement
-    const data = new FormData(form)
+    import type { PageData } from "./$types";
+    export let data: PageData
 
-    await fetch('/api/newsletter', {
-        method : 'POST',
-        body : data
-    });
-    
-}
+    $: ({posts} = data)
+
 </script>
 
-<h1>Newsletter</h1>
+<h1>Posts</h1>
 
-<form on:submit|preventDefault={subscribe}>
+<p>showing {posts.length} posts</p>
 
-    <input type="email" name="email">
-
-    <button>Subscribe</button>
-
-</form>
+{#each posts as {slug, title}}
+    <ul>
+        <li>
+            <a href="/hello/posts/{slug}">{title}</a>
+        </li>
+    </ul>
+{/each}

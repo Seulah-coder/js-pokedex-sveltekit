@@ -3,3 +3,4 @@
 <p>
     You can <a href="posts/create">+create</a> your posts here.
 </p>
+
